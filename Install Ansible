@@ -1,0 +1,10 @@
+# Below are the commands to deploy ansible 
+sudo apt-get install software-properties-common
+sudo apt-add-repository ppa:ansible/ansible
+sudo apt-get update
+sudo apt-get install ansible 
+
+# Check Version 
+ansible --version 
+
+# Now your ready to create a playbook 

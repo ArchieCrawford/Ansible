@@ -6,3 +6,7 @@ Create an Ansible Playbook
   2. Create an inventory file 
   3. Create a playbook 
   4. Execute and test it 
+
+Execute the script 
+
+ansible-playbook -i hosts df_playbook.yml

@@ -1,0 +1,17 @@
+#/etc/ansible/hosts
+
+[ubuntu]
+192.168.199.170
+
+[nexus]
+192.168.199.148
+192.168.199.149
+
+[nexus:vars] #varibles 
+username=cisco
+password=cisco
+
+[nexus_by_name]
+switch1 ansible_host=192.168.199.148
+switch2 ansible_host=192.168.199.149
+

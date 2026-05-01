@@ -102,6 +102,19 @@ export function useUpdateIssueStatus() {
   })
 }
 
+export function useUpdateIssue() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (vars: { id: string; patch: Parameters<typeof api.updateIssue>[1] }) =>
+      api.updateIssue(vars.id, vars.patch),
+    onSuccess: (issue) => {
+      qc.invalidateQueries({ queryKey: ['issues'] })
+      qc.invalidateQueries({ queryKey: ['issue', issue.id] })
+      qc.invalidateQueries({ queryKey: ['stores', 'summaries'] })
+    }
+  })
+}
+
 export function useComments(issueId?: string) {
   return useQuery({
     queryKey: ['comments', issueId],

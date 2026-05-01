@@ -119,6 +119,20 @@ export async function updateIssueStatus(
   return data
 }
 
+export async function updateIssue(
+  id: string,
+  patch: Partial<Issue>
+): Promise<Issue> {
+  const { data, error } = await supabase
+    .from('issues')
+    .update({ ...patch, updated_at: new Date().toISOString() })
+    .eq('id', id)
+    .select()
+    .single()
+  if (error) throw error
+  return data
+}
+
 // ---- comments -------------------------------------------------------------
 export async function listComments(issueId: string): Promise<Comment[]> {
   const { data, error } = await supabase

@@ -1,10 +1,11 @@
 'use client'
 
 import Link from 'next/link'
-import { useIssue, useItems, useStores, useUpdateIssueStatus } from '@/lib/hooks/useApi'
+import { useIssue, useItems, useStores, useUpdateIssue, useUpdateIssueStatus } from '@/lib/hooks/useApi'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { Field } from '@/components/ui/field'
 import { Comments } from '@/components/issue/Comments'
 import type { Issue } from '@/lib/types'
 
@@ -25,6 +26,7 @@ export default function IssueDetailPage({
   const { data: stores = [] } = useStores()
   const { data: items = [] } = useItems()
   const updateStatus = useUpdateIssueStatus()
+  const updateIssue = useUpdateIssue()
 
   if (isLoading) {
     return <div className="h-40 animate-pulse rounded-2xl bg-muted" />
@@ -35,6 +37,34 @@ export default function IssueDetailPage({
 
   const store = stores.find((s) => s.id === issue.store_id)
   const item = issue.item_id ? items.find((i) => i.id === issue.item_id) : null
+
+  const visibleItems = issue.store_id
+    ? items.filter((i) => i.store_id === issue.store_id)
+    : items
+
+  function setLinkedItem(itemId: string) {
+    const it = items.find((i) => i.id === itemId)
+    updateIssue.mutate({
+      id: issue!.id,
+      patch: {
+        item_id: itemId || null,
+        // if issue had no store, inherit from item
+        store_id: issue!.store_id || it?.store_id || null
+      }
+    })
+  }
+
+  function setLinkedStore(storeId: string) {
+    updateIssue.mutate({
+      id: issue!.id,
+      patch: {
+        store_id: storeId || null,
+        // clear item if it doesn't belong to the new store
+        item_id:
+          item && (!storeId || item.store_id === storeId) ? item.id : null
+      }
+    })
+  }
 
   return (
     <div className="space-y-6">
@@ -73,6 +103,39 @@ export default function IssueDetailPage({
             {issue.description}
           </p>
         )}
+
+        <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
+          <Field label="Linked Store">
+            <select
+              className="flex h-10 w-full rounded-xl border border-input bg-background px-3 text-sm"
+              value={issue.store_id ?? ''}
+              onChange={(e) => setLinkedStore(e.target.value)}
+              disabled={updateIssue.isPending}
+            >
+              <option value="">— None —</option>
+              {stores.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.name}
+                </option>
+              ))}
+            </select>
+          </Field>
+          <Field label="Linked Item">
+            <select
+              className="flex h-10 w-full rounded-xl border border-input bg-background px-3 text-sm"
+              value={issue.item_id ?? ''}
+              onChange={(e) => setLinkedItem(e.target.value)}
+              disabled={updateIssue.isPending}
+            >
+              <option value="">— None —</option>
+              {visibleItems.map((it) => (
+                <option key={it.id} value={it.id}>
+                  {it.item_name}
+                </option>
+              ))}
+            </select>
+          </Field>
+        </div>
 
         <div className="mt-6 flex flex-wrap gap-2">
           {statuses.map((s) => (

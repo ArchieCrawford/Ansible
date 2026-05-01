@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useUIStore } from '@/store/ui-store'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -12,6 +12,21 @@ export function SplashGate({ children }: { children: React.ReactNode }) {
   const guestName = useUIStore((s) => s.guestName)
   const setGuestName = useUIStore((s) => s.setGuestName)
   const [name, setName] = useState(guestName)
+
+  // Avoid SSR hydration mismatch: wait for client mount before reading
+  // the persisted Zustand state. Without this, server renders entered=false
+  // but client may rehydrate to entered=true, breaking hydration and event handlers.
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => {
+    setMounted(true)
+    setName(useUIStore.getState().guestName)
+  }, [])
+
+  if (!mounted) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background" />
+    )
+  }
 
   if (entered) return <>{children}</>
 

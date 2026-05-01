@@ -1,6 +1,6 @@
 'use client'
 
-import { use, useState } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import { useStores, useItems, useIssues } from '@/lib/hooks/useApi'
 import { Card } from '@/components/ui/card'
@@ -14,9 +14,9 @@ import type { Item } from '@/lib/types'
 export default function StoreDetailPage({
   params
 }: {
-  params: Promise<{ id: string }>
+  params: { id: string }
 }) {
-  const { id } = use(params)
+  const { id } = params
   const { data: stores = [] } = useStores()
   const store = stores.find((s) => s.id === id)
   const { data: items = [], isLoading: itemsLoading } = useItems(id)

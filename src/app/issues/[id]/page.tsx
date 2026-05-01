@@ -1,6 +1,5 @@
 'use client'
 
-import { use } from 'react'
 import Link from 'next/link'
 import { useIssue, useItems, useStores, useUpdateIssueStatus } from '@/lib/hooks/useApi'
 import { Card } from '@/components/ui/card'
@@ -19,9 +18,9 @@ const labels: Record<Issue['status'], string> = {
 export default function IssueDetailPage({
   params
 }: {
-  params: Promise<{ id: string }>
+  params: { id: string }
 }) {
-  const { id } = use(params)
+  const { id } = params
   const { data: issue, isLoading } = useIssue(id)
   const { data: stores = [] } = useStores()
   const { data: items = [] } = useItems()

@@ -24,14 +24,19 @@ export default function StoresPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Stores</h1>
+          <span className="text-xs font-semibold uppercase tracking-[0.14em] text-[hsl(var(--brand))]">
+            Locations
+          </span>
+          <h1 className="text-3xl font-extrabold tracking-tight">Stores</h1>
           <p className="text-sm text-muted-foreground">
-            Locations being maintained
+            Locations being maintained.
           </p>
         </div>
-        <Button onClick={openNew}>+ New Store</Button>
+        <Button onClick={openNew} className="shadow-sm">
+          + New Store
+        </Button>
       </div>
 
       {isLoading ? (

@@ -57,14 +57,19 @@ export default function ItemsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Items</h1>
+          <span className="text-xs font-semibold uppercase tracking-[0.14em] text-[hsl(var(--brand))]">
+            Inventory
+          </span>
+          <h1 className="text-3xl font-extrabold tracking-tight">Items</h1>
           <p className="text-sm text-muted-foreground">
-            All tracked equipment
+            All tracked equipment across every store.
           </p>
         </div>
-        <Button onClick={openNew}>+ Add Item</Button>
+        <Button onClick={openNew} className="shadow-sm">
+          + Add Item
+        </Button>
       </div>
 
       {isLoading ? (
@@ -72,9 +77,9 @@ export default function ItemsPage() {
       ) : items.length === 0 ? (
         <Card className="p-6 text-sm text-muted-foreground">No items yet.</Card>
       ) : (
-        <div className="overflow-hidden rounded-2xl border border-border bg-card">
+        <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
           <table className="w-full text-sm">
-            <thead className="bg-muted/50 text-left text-xs uppercase tracking-wide text-muted-foreground">
+            <thead className="border-b border-border bg-muted/40 text-left text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
               <tr>
                 <th className="px-4 py-3">Name</th>
                 <th className="px-4 py-3">Store</th>
@@ -89,7 +94,10 @@ export default function ItemsPage() {
               {items.map((it) => {
                 const c = commentsByItem.get(it.id)
                 return (
-                  <tr key={it.id} className="border-t border-border align-top">
+                  <tr
+                    key={it.id}
+                    className="border-t border-border align-top transition-colors hover:bg-muted/30"
+                  >
                     <td className="px-4 py-3 font-medium">{it.item_name}</td>
                     <td className="px-4 py-3">{storeName(it.store_id)}</td>
                     <td className="px-4 py-3">{it.serial_number ?? '—'}</td>

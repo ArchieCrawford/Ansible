@@ -25,26 +25,31 @@ export default function IssuesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Issues</h1>
+          <span className="text-xs font-semibold uppercase tracking-[0.14em] text-[hsl(var(--brand))]">
+            Backlog
+          </span>
+          <h1 className="text-3xl font-extrabold tracking-tight">Issues</h1>
           <p className="text-sm text-muted-foreground">
-            All maintenance issues across stores
+            All maintenance issues across stores.
           </p>
         </div>
-        <Button onClick={() => setOpen(true)}>+ New Issue</Button>
+        <Button onClick={() => setOpen(true)} className="shadow-sm">
+          + New Issue
+        </Button>
       </div>
 
-      <div className="flex gap-2">
+      <div className="inline-flex rounded-xl border border-border bg-white/60 p-1 shadow-sm backdrop-blur">
         {tabs.map((t) => (
           <button
             key={t.value}
             onClick={() => setFilter(t.value)}
             className={
-              'rounded-xl border px-3 py-1.5 text-sm transition-colors ' +
+              'rounded-lg px-3 py-1.5 text-sm font-medium transition-all ' +
               (filter === t.value
-                ? 'border-primary bg-primary text-primary-foreground'
-                : 'border-border bg-background hover:bg-accent')
+                ? 'bg-[hsl(var(--brand))] text-white shadow-sm'
+                : 'text-muted-foreground hover:text-foreground')
             }
           >
             {t.label}

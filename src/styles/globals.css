@@ -6,21 +6,21 @@
   :root {
     /* Firehouse Subs–inspired red theme */
     --background: 0 0% 100%;
-    --foreground: 0 0% 10%;
+    --foreground: 0 0% 9%;
 
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 10%;
+    --card-foreground: 0 0% 9%;
 
-    /* Firehouse red ~ #E4002B */
+    /* Firehouse red ~ #B30022 */
     --primary: 350 100% 35%;
     --primary-foreground: 0 0% 100%;
 
     /* Soft cream/red wash */
-    --secondary: 0 70% 96%;
+    --secondary: 0 70% 97%;
     --secondary-foreground: 350 100% 25%;
 
-    --muted: 0 30% 96%;
-    --muted-foreground: 0 10% 40%;
+    --muted: 0 20% 96%;
+    --muted-foreground: 0 5% 42%;
 
     /* Yellow accent like the FHS shield */
     --accent: 45 100% 92%;
@@ -29,16 +29,16 @@
     --destructive: 0 84% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 30% 88%;
-    --input: 0 30% 88%;
+    --border: 0 15% 90%;
+    --input: 0 15% 90%;
     --ring: 350 100% 35%;
 
-    --radius: 0.75rem;
+    --radius: 0.875rem;
 
     /* Brand tokens */
     --brand: 350 100% 35%;
     --brand-foreground: 0 0% 100%;
-    --brand-dark: 350 100% 22%;
+    --brand-dark: 350 100% 18%;
     --brand-yellow: 48 100% 50%;
   }
 
@@ -46,8 +46,51 @@
     @apply border-border;
   }
 
+  html, body {
+    @apply h-full;
+  }
+
   body {
-    @apply bg-background text-foreground;
-    font-feature-settings: 'rlig' 1, 'calt' 1;
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: 'rlig' 1, 'calt' 1, 'ss01' 1;
+    background-image:
+      radial-gradient(1200px 600px at -10% -20%, hsl(var(--brand) / 0.06), transparent 60%),
+      radial-gradient(900px 500px at 110% 0%, hsl(var(--brand-yellow) / 0.08), transparent 55%);
+    background-attachment: fixed;
+  }
+}
+
+@layer components {
+  .brand-gradient {
+    background-image: linear-gradient(
+      135deg,
+      hsl(var(--brand-dark)) 0%,
+      hsl(var(--brand)) 60%,
+      hsl(var(--brand) / 0.95) 100%
+    );
+  }
+
+  .glass {
+    background-color: hsl(var(--background) / 0.7);
+    backdrop-filter: saturate(180%) blur(12px);
+    -webkit-backdrop-filter: saturate(180%) blur(12px);
+  }
+
+  .ring-soft {
+    box-shadow:
+      0 1px 0 0 hsl(0 0% 0% / 0.02),
+      0 1px 2px 0 hsl(0 0% 0% / 0.04),
+      0 0 0 1px hsl(var(--border));
+  }
+
+  .card-hover {
+    @apply transition-all duration-200;
+  }
+  .card-hover:hover {
+    transform: translateY(-1px);
+    box-shadow:
+      0 1px 0 0 hsl(0 0% 0% / 0.02),
+      0 10px 30px -10px hsl(var(--brand) / 0.22),
+      0 0 0 1px hsl(var(--border));
   }
 }

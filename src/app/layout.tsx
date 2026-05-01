@@ -24,7 +24,11 @@ export default function RootLayout({
               <Sidebar />
               <div className="flex min-h-screen flex-1 flex-col">
                 <Topbar />
-                <main className="flex-1 bg-slate-50 p-6">{children}</main>
+                <main className="flex-1">
+                  <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+                    {children}
+                  </div>
+                </main>
               </div>
             </div>
           </SplashGate>

@@ -14,16 +14,30 @@ const labels: Record<Issue['status'], string> = {
 export function IssueCard({ issue }: { issue: Issue }) {
   const { data: items = [] } = useItems()
   const item = issue.item_id ? items.find((i) => i.id === issue.item_id) : null
+  const priorityClass =
+    issue.priority === 'urgent'
+      ? 'bg-red-50 text-red-700 ring-red-100'
+      : issue.priority === 'high'
+      ? 'bg-orange-50 text-orange-700 ring-orange-100'
+      : issue.priority === 'normal'
+      ? 'bg-slate-50 text-slate-700 ring-slate-200'
+      : 'bg-slate-50 text-slate-500 ring-slate-200'
+
   return (
-    <Link href={`/issues/${issue.id}`}>
-      <div className="rounded-2xl border border-border bg-card p-4 transition-shadow hover:shadow-md">
+    <Link href={`/issues/${issue.id}`} className="block">
+      <div className="group rounded-2xl border border-border bg-card p-4 card-hover">
         <div className="flex items-start justify-between gap-3">
-          <h4 className="font-medium">{issue.title}</h4>
+          <h4 className="font-semibold tracking-tight group-hover:text-[hsl(var(--brand))]">
+            {issue.title}
+          </h4>
           <Badge variant={issue.status}>{labels[issue.status]}</Badge>
         </div>
         {item && (
           <div className="mt-1 text-xs text-muted-foreground">
-            Item: <span className="font-medium text-foreground">{item.item_name}</span>
+            Item:{' '}
+            <span className="font-medium text-foreground">
+              {item.item_name}
+            </span>
           </div>
         )}
         {issue.description && (
@@ -31,10 +45,15 @@ export function IssueCard({ issue }: { issue: Issue }) {
             {issue.description}
           </p>
         )}
-        <div className="mt-3 flex items-center gap-3 text-xs text-muted-foreground">
-          <span className="capitalize">priority: {issue.priority}</span>
-          <span>·</span>
-          <span>{new Date(issue.created_at).toLocaleString()}</span>
+        <div className="mt-3 flex items-center gap-2 text-xs">
+          <span
+            className={`inline-flex items-center rounded-full px-2 py-0.5 font-medium capitalize ring-1 ${priorityClass}`}
+          >
+            {issue.priority}
+          </span>
+          <span className="text-muted-foreground">
+            {new Date(issue.created_at).toLocaleDateString()}
+          </span>
         </div>
       </div>
     </Link>

@@ -1,4 +1,6 @@
 node_modules
+.next
+out
 dist
 .env
 .env.local
@@ -6,3 +8,5 @@ dist
 .DS_Store
 *.log
 .vite
+*.tsbuildinfo
+next-env.d.ts

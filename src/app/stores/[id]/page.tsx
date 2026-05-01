@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button'
 import { IssueCard } from '@/components/issue/IssueCard'
 import { CreateIssueModal } from '@/components/issue/CreateIssueModal'
 import { CreateItemModal } from '@/components/item/CreateItemModal'
+import { CreateStoreModal } from '@/components/store/CreateStoreModal'
+import type { Item } from '@/lib/types'
 
 export default function StoreDetailPage({
   params
@@ -22,6 +24,17 @@ export default function StoreDetailPage({
 
   const [issueOpen, setIssueOpen] = useState(false)
   const [itemOpen, setItemOpen] = useState(false)
+  const [editingItem, setEditingItem] = useState<Item | null>(null)
+  const [storeOpen, setStoreOpen] = useState(false)
+
+  function openNewItem() {
+    setEditingItem(null)
+    setItemOpen(true)
+  }
+  function openEditItem(it: Item) {
+    setEditingItem(it)
+    setItemOpen(true)
+  }
 
   return (
     <div className="space-y-6">
@@ -39,7 +52,12 @@ export default function StoreDetailPage({
             )}
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" onClick={() => setItemOpen(true)}>
+            {store && (
+              <Button variant="ghost" onClick={() => setStoreOpen(true)}>
+                Edit Store
+              </Button>
+            )}
+            <Button variant="outline" onClick={openNewItem}>
               + Add Item
             </Button>
             <Button onClick={() => setIssueOpen(true)}>+ New Issue</Button>
@@ -59,11 +77,16 @@ export default function StoreDetailPage({
               <Card key={it.id} className="p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="font-medium">{it.item_name}</div>
-                  {it.purchase_date && (
-                    <span className="text-xs text-muted-foreground">
-                      {it.purchase_date}
-                    </span>
-                  )}
+                  <div className="flex items-center gap-2">
+                    {it.purchase_date && (
+                      <span className="text-xs text-muted-foreground">
+                        {it.purchase_date}
+                      </span>
+                    )}
+                    <Button size="sm" variant="ghost" onClick={() => openEditItem(it)}>
+                      Edit
+                    </Button>
+                  </div>
                 </div>
                 <dl className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
                   {it.location && <Row label="Location" value={it.location} />}
@@ -104,6 +127,12 @@ export default function StoreDetailPage({
         open={itemOpen}
         onClose={() => setItemOpen(false)}
         defaultStoreId={id}
+        item={editingItem}
+      />
+      <CreateStoreModal
+        open={storeOpen}
+        onClose={() => setStoreOpen(false)}
+        store={store ?? null}
       />
     </div>
   )

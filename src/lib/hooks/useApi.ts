@@ -22,6 +22,15 @@ export function useCreateStore() {
   })
 }
 
+export function useUpdateStore() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (vars: { id: string; patch: { name?: string; location?: string | null } }) =>
+      api.updateStore(vars.id, vars.patch),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['stores'] })
+  })
+}
+
 export function useItems(storeId?: string) {
   return useQuery({
     queryKey: ['items', storeId ?? null],
@@ -33,6 +42,23 @@ export function useCreateItem() {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: api.createItem,
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['items'] })
+  })
+}
+
+export function useUpdateItem() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (vars: { id: string; patch: Parameters<typeof api.updateItem>[1] }) =>
+      api.updateItem(vars.id, vars.patch),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['items'] })
+  })
+}
+
+export function useDeleteItem() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: api.deleteItem,
     onSuccess: () => qc.invalidateQueries({ queryKey: ['items'] })
   })
 }

@@ -24,6 +24,20 @@ export async function createStore(input: {
   return data
 }
 
+export async function updateStore(
+  id: string,
+  patch: Partial<Pick<Store, 'name' | 'location'>>
+): Promise<Store> {
+  const { data, error } = await supabase
+    .from('stores')
+    .update(patch)
+    .eq('id', id)
+    .select()
+    .single()
+  if (error) throw error
+  return data
+}
+
 // ---- items ----------------------------------------------------------------
 export async function listItems(storeId?: string): Promise<Item[]> {
   let q = supabase.from('items').select('*').order('created_at', { ascending: false })
@@ -41,6 +55,25 @@ export async function createItem(input: Partial<Item>): Promise<Item> {
     .single()
   if (error) throw error
   return data
+}
+
+export async function updateItem(
+  id: string,
+  patch: Partial<Item>
+): Promise<Item> {
+  const { data, error } = await supabase
+    .from('items')
+    .update({ ...patch, updated_at: new Date().toISOString() })
+    .eq('id', id)
+    .select()
+    .single()
+  if (error) throw error
+  return data
+}
+
+export async function deleteItem(id: string): Promise<void> {
+  const { error } = await supabase.from('items').delete().eq('id', id)
+  if (error) throw error
 }
 
 // ---- issues ---------------------------------------------------------------

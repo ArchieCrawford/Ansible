@@ -6,10 +6,21 @@ import { StoreCard } from '@/components/store/StoreCard'
 import { CreateStoreModal } from '@/components/store/CreateStoreModal'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
+import type { Store } from '@/lib/types'
 
 export default function StoresPage() {
   const { data: stores = [], isLoading } = useStoreSummaries()
   const [open, setOpen] = useState(false)
+  const [editing, setEditing] = useState<Store | null>(null)
+
+  function openNew() {
+    setEditing(null)
+    setOpen(true)
+  }
+  function openEdit(s: Store) {
+    setEditing(s)
+    setOpen(true)
+  }
 
   return (
     <div className="space-y-6">
@@ -20,7 +31,7 @@ export default function StoresPage() {
             Locations being maintained
           </p>
         </div>
-        <Button onClick={() => setOpen(true)}>+ New Store</Button>
+        <Button onClick={openNew}>+ New Store</Button>
       </div>
 
       {isLoading ? (
@@ -36,12 +47,16 @@ export default function StoresPage() {
       ) : (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {stores.map((s) => (
-            <StoreCard key={s.id} store={s} />
+            <StoreCard key={s.id} store={s} onEdit={() => openEdit(s)} />
           ))}
         </div>
       )}
 
-      <CreateStoreModal open={open} onClose={() => setOpen(false)} />
+      <CreateStoreModal
+        open={open}
+        onClose={() => setOpen(false)}
+        store={editing}
+      />
     </div>
   )
 }

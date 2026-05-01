@@ -5,14 +5,25 @@ import { useItems, useStores } from '@/lib/hooks/useApi'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { CreateItemModal } from '@/components/item/CreateItemModal'
+import type { Item } from '@/lib/types'
 
 export default function ItemsPage() {
   const { data: items = [], isLoading } = useItems()
   const { data: stores = [] } = useStores()
   const [open, setOpen] = useState(false)
+  const [editing, setEditing] = useState<Item | null>(null)
 
   const storeName = (id: string | null) =>
     stores.find((s) => s.id === id)?.name ?? '—'
+
+  function openNew() {
+    setEditing(null)
+    setOpen(true)
+  }
+  function openEdit(item: Item) {
+    setEditing(item)
+    setOpen(true)
+  }
 
   return (
     <div className="space-y-6">
@@ -23,7 +34,7 @@ export default function ItemsPage() {
             All tracked equipment
           </p>
         </div>
-        <Button onClick={() => setOpen(true)}>+ Add Item</Button>
+        <Button onClick={openNew}>+ Add Item</Button>
       </div>
 
       {isLoading ? (
@@ -40,6 +51,7 @@ export default function ItemsPage() {
                 <th className="px-4 py-3">Serial #</th>
                 <th className="px-4 py-3">Purchase Date</th>
                 <th className="px-4 py-3">Location</th>
+                <th className="px-4 py-3 text-right">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -50,6 +62,11 @@ export default function ItemsPage() {
                   <td className="px-4 py-3">{it.serial_number ?? '—'}</td>
                   <td className="px-4 py-3">{it.purchase_date ?? '—'}</td>
                   <td className="px-4 py-3">{it.location ?? '—'}</td>
+                  <td className="px-4 py-3 text-right">
+                    <Button size="sm" variant="ghost" onClick={() => openEdit(it)}>
+                      Edit
+                    </Button>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -57,7 +74,11 @@ export default function ItemsPage() {
         </div>
       )}
 
-      <CreateItemModal open={open} onClose={() => setOpen(false)} />
+      <CreateItemModal
+        open={open}
+        onClose={() => setOpen(false)}
+        item={editing}
+      />
     </div>
   )
 }

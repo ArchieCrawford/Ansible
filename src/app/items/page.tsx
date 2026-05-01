@@ -5,6 +5,7 @@ import { useAllComments, useIssues, useItems, useStores } from '@/lib/hooks/useA
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { CreateItemModal } from '@/components/item/CreateItemModal'
+import { ExportToolbar } from '@/components/common/ExportToolbar'
 import type { Item } from '@/lib/types'
 
 export default function ItemsPage() {
@@ -55,6 +56,26 @@ export default function ItemsPage() {
     setOpen(true)
   }
 
+  const exportRows = useMemo(
+    () =>
+      items.map((it) => {
+        const c = commentsByItem.get(it.id)
+        return {
+          Name: it.item_name ?? '',
+          Store: storeName(it.store_id),
+          'Serial #': it.serial_number ?? '',
+          'Purchase Date': it.purchase_date ?? '',
+          Location: it.location ?? '',
+          Notes: it.notes ?? '',
+          'Comment Count': c?.count ?? 0,
+          'Last Comment Author': c?.last?.author ?? '',
+          'Last Comment': c?.last?.message ?? ''
+        }
+      }),
+    // storeName depends on stores; commentsByItem already memoized
+    [items, stores, commentsByItem]
+  )
+
   return (
     <div className="space-y-6">
       <div className="flex items-end justify-between gap-4">
@@ -71,6 +92,13 @@ export default function ItemsPage() {
           + Add Item
         </Button>
       </div>
+
+      <ExportToolbar
+        filename={`firehouse-items-${new Date().toISOString().slice(0, 10)}.csv`}
+        rows={exportRows}
+        emailSubject={`FireHouse — Items export (${exportRows.length})`}
+        emailIntro={`FireHouse items export — ${exportRows.length} item(s) as of ${new Date().toLocaleString()}.`}
+      />
 
       {isLoading ? (
         <div className="h-24 animate-pulse rounded-2xl bg-muted" />

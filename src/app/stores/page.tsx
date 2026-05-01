@@ -1,11 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useStoreSummaries } from '@/lib/hooks/useApi'
 import { StoreCard } from '@/components/store/StoreCard'
 import { CreateStoreModal } from '@/components/store/CreateStoreModal'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
+import { ExportToolbar } from '@/components/common/ExportToolbar'
 import type { Store } from '@/lib/types'
 
 export default function StoresPage() {
@@ -21,6 +22,18 @@ export default function StoresPage() {
     setEditing(s)
     setOpen(true)
   }
+
+  const exportRows = useMemo(
+    () =>
+      stores.map((s) => ({
+        Name: s.name,
+        Location: s.location ?? '',
+        Open: s.open_count,
+        'In Progress': s.in_progress_count,
+        Resolved: s.resolved_count
+      })),
+    [stores]
+  )
 
   return (
     <div className="space-y-6">
@@ -38,6 +51,13 @@ export default function StoresPage() {
           + New Store
         </Button>
       </div>
+
+      <ExportToolbar
+        filename={`firehouse-stores-${new Date().toISOString().slice(0, 10)}.csv`}
+        rows={exportRows}
+        emailSubject={`FireHouse — Stores export (${exportRows.length})`}
+        emailIntro={`FireHouse stores export — ${exportRows.length} store(s) as of ${new Date().toLocaleString()}.`}
+      />
 
       {isLoading ? (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">

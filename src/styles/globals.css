@@ -94,3 +94,19 @@
       0 0 0 1px hsl(var(--border));
   }
 }
+
+@media print {
+  /* Hide the chrome on print */
+  header, aside, nav, .print\:hidden { display: none !important; }
+  body {
+    background: #fff !important;
+  }
+  main, .max-w-7xl {
+    max-width: none !important;
+    padding: 0 !important;
+  }
+  table { page-break-inside: auto; }
+  tr { page-break-inside: avoid; page-break-after: auto; }
+  thead { display: table-header-group; }
+  a { color: inherit; text-decoration: none; }
+}

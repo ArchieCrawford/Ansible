@@ -12,10 +12,10 @@ const links = [
   { href: '/issues',    label: 'Issues',    icon: Wrench }
 ]
 
-export function Sidebar() {
+export function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname()
   return (
-    <aside className="hidden w-64 shrink-0 border-r border-border bg-white/60 backdrop-blur md:flex md:flex-col">
+    <div className="flex h-full flex-col">
       <div className="flex h-16 items-center gap-2.5 border-b border-border px-5">
         <div className="brand-gradient flex h-9 w-9 items-center justify-center rounded-xl text-white shadow-sm ring-1 ring-black/5">
           <Flame className="h-5 w-5" />
@@ -40,6 +40,7 @@ export function Sidebar() {
             <Link
               key={l.href}
               href={l.href}
+              onClick={onNavigate}
               className={cn(
                 'group relative flex items-center gap-3 rounded-xl px-3 py-2 text-sm transition-all',
                 active
@@ -74,6 +75,14 @@ export function Sidebar() {
           </div>
         </div>
       </div>
+    </div>
+  )
+}
+
+export function Sidebar() {
+  return (
+    <aside className="hidden w-64 shrink-0 border-r border-border bg-white/60 backdrop-blur md:flex md:flex-col">
+      <SidebarContent />
     </aside>
   )
 }

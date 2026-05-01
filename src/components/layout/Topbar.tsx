@@ -2,7 +2,8 @@
 
 import { useUIStore } from '@/store/ui-store'
 import { Button } from '@/components/ui/button'
-import { Flame, LogOut } from 'lucide-react'
+import { LogOut } from 'lucide-react'
+import { MobileNav } from './MobileNav'
 
 export function Topbar() {
   const guestName = useUIStore((s) => s.guestName)
@@ -10,9 +11,7 @@ export function Topbar() {
   return (
     <header className="brand-gradient sticky top-0 z-30 flex h-16 items-center justify-between border-b border-black/10 px-4 text-white shadow-[0_4px_20px_-8px_hsl(var(--brand)/0.5)] sm:px-6 lg:px-8">
       <div className="flex items-center gap-2.5">
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/15 ring-1 ring-white/25 backdrop-blur md:hidden">
-          <Flame className="h-5 w-5" />
-        </div>
+        <MobileNav />
         <div className="text-xl font-extrabold tracking-tight">
           Fire<span className="text-[hsl(var(--brand-yellow))]">House</span>
         </div>

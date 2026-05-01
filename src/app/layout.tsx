@@ -6,7 +6,7 @@ import { Sidebar } from '@/components/layout/Sidebar'
 import { Topbar } from '@/components/layout/Topbar'
 
 export const metadata: Metadata = {
-  title: 'Ansible — Maintenance Tracker',
+  title: 'FireHouse — Maintenance Tracker',
   description: 'Track stores, items, and maintenance issues.'
 }
 

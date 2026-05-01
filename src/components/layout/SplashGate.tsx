@@ -33,7 +33,7 @@ export function SplashGate({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 p-6">
       <div className="w-full max-w-sm rounded-2xl border border-border bg-background p-8 shadow-sm">
-        <h1 className="text-2xl font-bold tracking-tight">Ansible</h1>
+        <h1 className="text-2xl font-bold tracking-tight">FireHouse</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Maintenance &amp; asset tracker — demo mode
         </p>

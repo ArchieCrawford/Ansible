@@ -9,7 +9,7 @@ export function Topbar() {
   const setEntered = useUIStore((s) => s.setEntered)
   return (
     <header className="flex h-14 items-center justify-between border-b border-border bg-[hsl(var(--brand))] px-6 text-white">
-      <div className="text-xl font-extrabold tracking-tight">Ansible</div>
+      <div className="text-xl font-extrabold tracking-tight">FireHouse</div>
       <div className="flex items-center gap-4">
         <div className="text-sm text-white/80">
           Signed in as <span className="font-medium text-white">{guestName}</span>

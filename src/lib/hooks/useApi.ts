@@ -110,11 +110,20 @@ export function useComments(issueId?: string) {
   })
 }
 
+export function useAllComments() {
+  return useQuery({
+    queryKey: ['comments', 'all'],
+    queryFn: api.listAllComments
+  })
+}
+
 export function useCreateComment(issueId?: string) {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: api.createComment,
-    onSuccess: () =>
+    onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['comments', issueId] })
+      qc.invalidateQueries({ queryKey: ['comments', 'all'] })
+    }
   })
 }

@@ -2,7 +2,7 @@
 
 import { use } from 'react'
 import Link from 'next/link'
-import { useIssue, useStores, useUpdateIssueStatus } from '@/lib/hooks/useApi'
+import { useIssue, useItems, useStores, useUpdateIssueStatus } from '@/lib/hooks/useApi'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -24,6 +24,7 @@ export default function IssueDetailPage({
   const { id } = use(params)
   const { data: issue, isLoading } = useIssue(id)
   const { data: stores = [] } = useStores()
+  const { data: items = [] } = useItems()
   const updateStatus = useUpdateIssueStatus()
 
   if (isLoading) {
@@ -34,6 +35,7 @@ export default function IssueDetailPage({
   }
 
   const store = stores.find((s) => s.id === issue.store_id)
+  const item = issue.item_id ? items.find((i) => i.id === issue.item_id) : null
 
   return (
     <div className="space-y-6">
@@ -53,8 +55,15 @@ export default function IssueDetailPage({
               {issue.title}
             </h1>
             <div className="mt-1 text-sm text-muted-foreground">
-              {store ? store.name : 'No store'} · priority{' '}
-              <span className="capitalize">{issue.priority}</span>
+              {store ? store.name : 'No store'}
+              {item && (
+                <>
+                  {' · '}
+                  Item: <span className="font-medium text-foreground">{item.item_name}</span>
+                </>
+              )}
+              {' · '}
+              priority <span className="capitalize">{issue.priority}</span>
             </div>
           </div>
           <Badge variant={issue.status}>{labels[issue.status]}</Badge>

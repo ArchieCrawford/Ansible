@@ -130,6 +130,15 @@ export async function listComments(issueId: string): Promise<Comment[]> {
   return data ?? []
 }
 
+export async function listAllComments(): Promise<Comment[]> {
+  const { data, error } = await supabase
+    .from('comments')
+    .select('*')
+    .order('created_at', { ascending: false })
+  if (error) throw error
+  return data ?? []
+}
+
 export async function createComment(input: {
   issue_id: string
   author: string

@@ -1,75 +1,95 @@
-import { useEffect, useState } from 'react'
-import { supabase } from '../supabase'
+import { useState } from 'react'
+import { Button } from './ui/Button'
+import { Dialog, DialogTitle } from './ui/Dialog'
+import { Input } from './ui/Input'
+import { useAddMaintenance, useMaintenance } from '../lib/hooks/useItems'
 
 export default function ItemDetail({ item, onClose }) {
-  const [records, setRecords] = useState([])
   const [desc, setDesc] = useState('')
   const [date, setDate] = useState('')
 
-  async function loadRecords() {
-    const { data } = await supabase
-      .from('maintenance_records')
-      .select('*')
-      .eq('item_id', item.id)
-      .order('date', { ascending: false })
-    setRecords(data || [])
-  }
+  const { data: records = [], isLoading } = useMaintenance(item?.id)
+  const addRecord = useAddMaintenance(item?.id)
 
-  async function addRecord() {
-    await supabase.from('maintenance_records').insert([{
-      item_id: item.id,
+  async function handleAdd() {
+    if (!desc.trim()) return
+    await addRecord.mutateAsync({
       description: desc,
-      date
-    }])
+      date: date || null
+    })
     setDesc('')
     setDate('')
-    loadRecords()
   }
 
-  useEffect(() => {
-    loadRecords()
-  }, [])
-
   return (
-    <div style={overlay}>
-      <div style={modal}>
-        <h2>{item.item_name}</h2>
-        <p>{item.location}</p>
-        <h3>Maintenance</h3>
-        {records.map(r => (
-          <div key={r.id}>
-            {r.date} - {r.description}
+    <Dialog
+      open={!!item}
+      onClose={onClose}
+      className="max-w-lg"
+    >
+      {item && (
+        <>
+          <DialogTitle>{item.item_name}</DialogTitle>
+          {item.location && (
+            <p className="mt-1 text-sm text-muted-foreground">
+              {item.location}
+            </p>
+          )}
+
+          <h3 className="mt-6 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+            Maintenance
+          </h3>
+
+          <div className="mt-3 space-y-2">
+            {isLoading && (
+              <div className="h-10 animate-pulse rounded-lg bg-muted" />
+            )}
+            {!isLoading && records.length === 0 && (
+              <p className="text-sm text-muted-foreground">
+                No maintenance records yet.
+              </p>
+            )}
+            {records.map(r => (
+              <div
+                key={r.id}
+                className="rounded-xl border border-border bg-muted/40 px-3 py-2 text-sm"
+              >
+                <div className="font-medium">
+                  {r.date || 'Undated'}
+                </div>
+                <div className="text-muted-foreground">
+                  {r.description}
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
-        <input
-          placeholder="Description"
-          value={desc}
-          onChange={e => setDesc(e.target.value)}
-        />
-        <input
-          type="date"
-          value={date}
-          onChange={e => setDate(e.target.value)}
-        />
-        <button onClick={addRecord}>Add</button>
-        <button onClick={onClose}>Close</button>
-      </div>
-    </div>
+
+          <div className="mt-4 space-y-2">
+            <Input
+              placeholder="Description"
+              value={desc}
+              onChange={e => setDesc(e.target.value)}
+            />
+            <Input
+              type="date"
+              value={date}
+              onChange={e => setDate(e.target.value)}
+            />
+          </div>
+
+          <div className="mt-6 flex justify-end gap-2">
+            <Button variant="ghost" onClick={onClose}>
+              Close
+            </Button>
+            <Button
+              onClick={handleAdd}
+              disabled={addRecord.isPending || !desc.trim()}
+            >
+              {addRecord.isPending ? 'Adding…' : 'Add'}
+            </Button>
+          </div>
+        </>
+      )}
+    </Dialog>
   )
-}
-
-const overlay = {
-  position: 'fixed',
-  top: 0,
-  left: 0,
-  right: 0,
-  bottom: 0,
-  background: 'rgba(0,0,0,0.4)'
-}
-
-const modal = {
-  background: '#fff',
-  padding: 20,
-  width: 400,
-  margin: '100px auto'
 }

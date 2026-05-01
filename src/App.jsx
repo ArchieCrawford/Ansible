@@ -1,58 +1,75 @@
-import { useEffect, useState } from 'react'
-import { supabase } from './supabase'
+import { useState } from 'react'
+import { SplashScreen } from './components/SplashScreen'
 import AddItemModal from './components/AddItemModal'
 import ItemDetail from './components/ItemDetail'
+import { Button } from './components/ui/Button'
+import { Card } from './components/ui/Card'
+import { useItems } from './lib/hooks/useItems'
 
 export default function App() {
-  const [items, setItems] = useState([])
+  const [entered, setEntered] = useState(false)
   const [selectedItem, setSelectedItem] = useState(null)
   const [showModal, setShowModal] = useState(false)
+  const { data: items = [], isLoading, isError, error } = useItems()
 
-  async function loadItems() {
-    const { data } = await supabase
-      .from('items')
-      .select('*')
-      .order('created_at', { ascending: false })
-    setItems(data || [])
+  if (!entered) {
+    return <SplashScreen onEnter={() => setEntered(true)} />
   }
 
-  useEffect(() => {
-    loadItems()
-  }, [])
-
   return (
-    <div style={{ padding: 20, fontFamily: 'sans-serif' }}>
-      <h1>Asset Tracker</h1>
-      <button onClick={() => setShowModal(true)}>+ Add Item</button>
-      <div style={{ marginTop: 20 }}>
+    <div className="mx-auto max-w-3xl px-6 py-10">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-semibold tracking-tight">
+          Asset Tracker
+        </h1>
+        <Button onClick={() => setShowModal(true)}>+ Add Item</Button>
+      </div>
+
+      <div className="mt-8 space-y-3">
+        {isLoading && (
+          <>
+            <div className="h-20 animate-pulse rounded-2xl bg-muted" />
+            <div className="h-20 animate-pulse rounded-2xl bg-muted" />
+            <div className="h-20 animate-pulse rounded-2xl bg-muted" />
+          </>
+        )}
+
+        {isError && (
+          <Card className="border-red-200 bg-red-50 text-red-700">
+            Failed to load items: {error.message}
+          </Card>
+        )}
+
+        {!isLoading && !isError && items.length === 0 && (
+          <Card className="text-center text-muted-foreground">
+            No items yet. Click <strong>+ Add Item</strong> to get started.
+          </Card>
+        )}
+
         {items.map(item => (
-          <div
+          <Card
             key={item.id}
             onClick={() => setSelectedItem(item)}
-            style={{
-              padding: 12,
-              border: '1px solid #ddd',
-              marginBottom: 10,
-              cursor: 'pointer'
-            }}
+            className="cursor-pointer transition-shadow hover:shadow-md"
           >
-            <strong>{item.item_name}</strong>
-            <div>{item.location}</div>
-          </div>
+            <div className="font-medium">{item.item_name}</div>
+            {item.location && (
+              <div className="mt-1 text-sm text-muted-foreground">
+                {item.location}
+              </div>
+            )}
+          </Card>
         ))}
       </div>
-      {showModal && (
-        <AddItemModal
-          onClose={() => setShowModal(false)}
-          onCreated={loadItems}
-        />
-      )}
-      {selectedItem && (
-        <ItemDetail
-          item={selectedItem}
-          onClose={() => setSelectedItem(null)}
-        />
-      )}
+
+      <AddItemModal
+        open={showModal}
+        onClose={() => setShowModal(false)}
+      />
+      <ItemDetail
+        item={selectedItem}
+        onClose={() => setSelectedItem(null)}
+      />
     </div>
   )
 }

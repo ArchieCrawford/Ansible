@@ -1,59 +1,70 @@
 import { useState } from 'react'
-import { supabase } from '../supabase'
+import { Button } from './ui/Button'
+import { Dialog, DialogTitle } from './ui/Dialog'
+import { Input } from './ui/Input'
+import { useAddItem } from '../lib/hooks/useItems'
 
-export default function AddItemModal({ onClose, onCreated }) {
-  const [form, setForm] = useState({
-    item_name: '',
-    purchase_date: '',
-    serial_number: '',
-    location: ''
-  })
+const empty = {
+  item_name: '',
+  purchase_date: '',
+  serial_number: '',
+  location: ''
+}
+
+export default function AddItemModal({ open, onClose }) {
+  const [form, setForm] = useState(empty)
+  const addItem = useAddItem()
+
+  function update(field) {
+    return e => setForm({ ...form, [field]: e.target.value })
+  }
 
   async function handleSubmit() {
-    await supabase.from('items').insert([form])
-    onCreated()
+    if (!form.item_name.trim()) return
+    await addItem.mutateAsync({
+      ...form,
+      purchase_date: form.purchase_date || null
+    })
+    setForm(empty)
     onClose()
   }
 
   return (
-    <div style={overlay}>
-      <div style={modal}>
-        <h2>Add Item</h2>
-        <input
-          placeholder="Name"
-          onChange={e => setForm({ ...form, item_name: e.target.value })}
+    <Dialog open={open} onClose={onClose}>
+      <DialogTitle>Add Item</DialogTitle>
+      <div className="mt-4 space-y-3">
+        <Input
+          placeholder="Item name"
+          value={form.item_name}
+          onChange={update('item_name')}
         />
-        <input
+        <Input
           type="date"
-          onChange={e => setForm({ ...form, purchase_date: e.target.value })}
+          value={form.purchase_date}
+          onChange={update('purchase_date')}
         />
-        <input
-          placeholder="Serial"
-          onChange={e => setForm({ ...form, serial_number: e.target.value })}
+        <Input
+          placeholder="Serial number"
+          value={form.serial_number}
+          onChange={update('serial_number')}
         />
-        <input
+        <Input
           placeholder="Location"
-          onChange={e => setForm({ ...form, location: e.target.value })}
+          value={form.location}
+          onChange={update('location')}
         />
-        <button onClick={handleSubmit}>Save</button>
-        <button onClick={onClose}>Cancel</button>
       </div>
-    </div>
+      <div className="mt-6 flex justify-end gap-2">
+        <Button variant="ghost" onClick={onClose}>
+          Cancel
+        </Button>
+        <Button
+          onClick={handleSubmit}
+          disabled={addItem.isPending || !form.item_name.trim()}
+        >
+          {addItem.isPending ? 'Saving…' : 'Save'}
+        </Button>
+      </div>
+    </Dialog>
   )
-}
-
-const overlay = {
-  position: 'fixed',
-  top: 0,
-  left: 0,
-  right: 0,
-  bottom: 0,
-  background: 'rgba(0,0,0,0.4)'
-}
-
-const modal = {
-  background: '#fff',
-  padding: 20,
-  width: 300,
-  margin: '100px auto'
 }

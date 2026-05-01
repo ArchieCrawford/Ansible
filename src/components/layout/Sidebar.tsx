@@ -17,8 +17,7 @@ export function Sidebar() {
   return (
     <aside className="hidden w-64 shrink-0 border-r border-border bg-background p-4 md:flex md:flex-col">
       <div className="mb-8 px-2">
-        <div className="text-lg font-bold">Ansible</div>
-        <div className="text-xs text-muted-foreground">Maintenance</div>
+        <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Maintenance</div>
       </div>
       <nav className="space-y-1">
         {links.map((l) => {
